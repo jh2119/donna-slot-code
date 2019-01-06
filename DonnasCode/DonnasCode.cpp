@@ -11,7 +11,7 @@ using namespace std;
 const int PULL = 1440;
 const int SIZE = 7;
 
-int winningNum(int winNum);
+int winningNum();
 double acceptBets(double bet);
 void addToJackpot(double jackpot, double bet, double plusJackpot);
 void payOut(double bet, double jackpot, double totalJackpot, double moneyPaidOut);
@@ -30,18 +30,18 @@ int main() {
     cout << "outfile is not open" << endl;
   }
 
-  int num;
   double allJackpot;
   double endTotal;
   double endPaidOut;
   double endJackpot;
 
-  winningNum(num);
+  // setup the winning number
+  int winNum = winningNum();
 
+  // "operate" the slot machine
   for (int p = 0; p <= PULL; p++)
   {
-    int num;
-    int pNum;
+    int playerNum;
     double betMade;
     double theJackpot;
     double money = 10000.00;
@@ -49,18 +49,21 @@ int main() {
 
     acceptBets(betMade);
     addToJackpot(money, betMade, allJackpot);
-    playerNum(pNum);
-    if (pNum == num)
-    {
+    //playerNum(pNum);
+
+    // check for a winner
+    if (playerNum == winNum) {
       payOut(betMade, money, theJackpot, endPaidOut);
       cout << "You WIN!: $" << theJackpot << endl;
-      playerNum(pNum);
-      winningNum(num);
+      //playerNum(pNum);
+
+      // generate new winning number
+      winNum = winningNum();
       printWin(outFile, theJackpot);
     }
     else
       cout << "Try your luck and pull again!" << endl;
-    print(outFile, allJackpot, betMade, num, pNum);
+    print(outFile, allJackpot, betMade, winNum, playerNum);
   }
 
   endOfDay(endTotal, endPaidOut, endJackpot, allJackpot);
@@ -98,20 +101,25 @@ void endOfDay(double finalTotal, double moneyPaidOut, double finalJackpot, doubl
   finalTotal = finalJackpot - moneyPaidOut;
 }
 
-int winningNum(int winNum)
-{
+///
+/// winningNum chooses a new random number
+///
+int winningNum() {
+  int winningNumber = 0;
+
   //start at beginning of day with "else" and after payOut with if statement.
   if (payOut > 0)
   {
     srand(time(0));
-    winNum = (rand() % 999) + 1;
+    winningNumber = (rand() % 999) + 1;
   }
   else
   {
     srand(time(0));
-    winNum = (rand() % 999) + 1;
+    winningNumber = (rand() % 999) + 1;
   }
-  return winNum;
+
+  return winningNumber;
 }
 
 double acceptBets(double bet)
