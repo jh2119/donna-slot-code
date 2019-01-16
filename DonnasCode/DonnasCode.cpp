@@ -12,7 +12,7 @@ const int PULL = 1440;
 const int SIZE = 7;
 
 int winningNum();
-double acceptBets(double bet);
+double acceptBets();
 void addToJackpot(double jackpot, double bet, double plusJackpot);
 void payOut(double bet, double jackpot, double totalJackpot, double moneyPaidOut);
 int playerNum(int playNum);
@@ -30,7 +30,13 @@ int main() {
     cout << "outfile is not open" << endl;
   }
 
-  double allJackpot;
+  // setup random numbers
+  srand(time(0));
+
+  // this slot's jackpot
+  const double INITIAL_MONEY = 10000.00;
+  double theJackpot = INITIAL_MONEY;
+
   double endTotal;
   double endPaidOut;
   double endJackpot;
@@ -39,23 +45,21 @@ int main() {
   int winNum = winningNum();
 
   // "operate" the slot machine
-  for (int p = 0; p <= PULL; p++)
-  {
+  for (int p = 0; p <= PULL; p++) {
     int playerNum;
-    double betMade;
-    double theJackpot;
-    double money = 10000.00;
-    double allJackpot;
+    double betMade;    
 
-    acceptBets(betMade);
-    addToJackpot(money, betMade, allJackpot);
-    //playerNum(pNum);
+    // select the next bet amount
+    betMade = acceptBets();
+
+    addToJackpot(INITIAL_MONEY, betMade, theJackpot);
+//    playerNum(pNum);
 
     // check for a winner
     if (playerNum == winNum) {
-      payOut(betMade, money, theJackpot, endPaidOut);
+      payOut(betMade, INITIAL_MONEY, theJackpot, endPaidOut);
       cout << "You WIN!: $" << theJackpot << endl;
-      //playerNum(pNum);
+//      playerNum(pNum);
 
       // generate new winning number
       winNum = winningNum();
@@ -63,10 +67,10 @@ int main() {
     }
     else
       cout << "Try your luck and pull again!" << endl;
-    print(outFile, allJackpot, betMade, winNum, playerNum);
+    print(outFile, theJackpot, betMade, winNum, playerNum);
   }
 
-  endOfDay(endTotal, endPaidOut, endJackpot, allJackpot);
+  endOfDay(endTotal, endPaidOut, endJackpot, theJackpot);
   printEnd(outFile, endTotal, endPaidOut, endJackpot);
 
   return 0;
@@ -110,23 +114,28 @@ int winningNum() {
   //start at beginning of day with "else" and after payOut with if statement.
   if (payOut > 0)
   {
-    srand(time(0));
+    //srand(time(0));
     winningNumber = (rand() % 999) + 1;
   }
   else
   {
-    srand(time(0));
+    //srand(time(0));
     winningNumber = (rand() % 999) + 1;
   }
 
   return winningNumber;
 }
 
-double acceptBets(double bet)
+///
+/// randomly picking a wager/bet amount
+///
+double acceptBets()
 {
+  double bet;
   int rIndex;
   double wagerAmts[SIZE] = { 1.00, 5.00, 10.00, 20.00, 50.00, 100.00, 1000.00 };
-  srand(time(0));
+  
+//  srand(time(0));
   rIndex = rand() % 7 + 1;
   bet = wagerAmts[rIndex];
 
@@ -169,6 +178,11 @@ void addToJackpot(double jackpot, double bet, double plusJackpot)
 
 }
 
+///
+/// payOut calculates the payout on a win based on the bet and jackpot
+///
+///
+///
 void payOut(double bet, double jackpot, double totalJackpot, double moneyPaidOut)
 {
   double jackpot1, jackpot2, jackpot3, jackpot4, jackpot5, jackpot6;
@@ -234,7 +248,7 @@ void payOut(double bet, double jackpot, double totalJackpot, double moneyPaidOut
 
 int playerNum(int playNum)
 {
-  srand(time(0));
+  //srand(time(0));
   playNum = (rand() % 999) + 1;
   return playNum;
 }
